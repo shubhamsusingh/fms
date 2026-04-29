@@ -15,26 +15,15 @@ class PaymentController extends Controller
      */
     private function getProvider(): PayPalClient
     {
-        $provider = new PayPalClient([
-            'mode'    => env('PAYPAL_MODE', 'sandbox'),
-            'sandbox' => [
-                'client_id'     => env('PAYPAL_SANDBOX_CLIENT_ID'),
-                'client_secret' => env('PAYPAL_SANDBOX_CLIENT_SECRET'),
-                'app_id'        => '',
-            ],
-            'live' => [
-                'client_id'     => env('PAYPAL_LIVE_CLIENT_ID'),
-                'client_secret' => env('PAYPAL_LIVE_CLIENT_SECRET'),
-                'app_id'        => '',
-            ],
-            'payment_action'    => 'Sale',
-            'currency'          => env('PAYPAL_CURRENCY', 'USD'),
-            'notify_url'        => '',
-            'locale'            => 'en_US',
-            'validate_ssl'      => true,
-        ]);
-
+        $provider = new PayPalClient();
+        
+        // Use standard config but override validate_ssl for local environment
+        $config = config('paypal');
+        $config['validate_ssl'] = env('APP_ENV') !== 'production' ? false : true;
+        
+        $provider->setApiCredentials($config);
         $provider->getAccessToken();
+        
         return $provider;
     }
 

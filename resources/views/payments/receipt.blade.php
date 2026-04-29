@@ -19,7 +19,16 @@
         <table class="table table-borderless table-sm mb-0">
           <tr><td class="text-muted small fw-semibold">Receipt No</td><td class="fw-bold text-primary">{{ $payment->receipt_no }}</td></tr>
           <tr><td class="text-muted small fw-semibold">Transaction ID</td><td><code>{{ $payment->transaction_id ?? 'Offline' }}</code></td></tr>
-          <tr><td class="text-muted small fw-semibold">Method</td><td>@if($payment->payment_method==='paypal')<i class="fab fa-paypal me-1" style="color:#003087"></i>PayPal@else<i class="fas fa-money-bill-wave me-1 text-success"></i>Cash/Offline@endif</td></tr>
+          <tr>
+            <td class="text-muted small fw-semibold">Method</td>
+            <td>
+              @if($payment->payment_method === 'paypal')
+                <i class="fab fa-paypal me-1" style="color:#003087"></i>PayPal
+              @else
+                <i class="fas fa-money-bill-wave me-1 text-success"></i>Cash/Offline
+              @endif
+            </td>
+          </tr>
         </table>
       </div>
       <div class="col-6 text-end">
@@ -52,8 +61,20 @@
     <h6 class="fw-semibold mb-3 text-muted"><i class="fas fa-list-alt me-2"></i>Fee Breakdown &ndash; Sem {{ $payment->feeStructure->semester }} ({{ $payment->feeStructure->academic_year }})</h6>
     <table class="table table-bordered table-sm">
       <tbody>
-        @foreach(['Tuition Fee'=>$payment->feeStructure->tuition_fee,'Exam Fee'=>$payment->feeStructure->exam_fee,'Library Fee'=>$payment->feeStructure->library_fee,'Lab Fee'=>$payment->feeStructure->lab_fee,'Hostel Fee'=>$payment->feeStructure->hostel_fee,'Other Fee'=>$payment->feeStructure->other_fee] as $lbl=>$amt)
-        @if($amt>0)<tr><td>{{ $lbl }}</td><td class="text-end">&#8377;{{ number_format($amt,2) }}</td></tr>@endif
+        @foreach([
+            'Tuition Fee' => $payment->feeStructure->tuition_fee,
+            'Exam Fee'    => $payment->feeStructure->exam_fee,
+            'Library Fee' => $payment->feeStructure->library_fee,
+            'Lab Fee'     => $payment->feeStructure->lab_fee,
+            'Hostel Fee'  => $payment->feeStructure->hostel_fee,
+            'Other Fee'   => $payment->feeStructure->other_fee
+        ] as $lbl => $amt)
+          @if($amt > 0)
+            <tr>
+              <td>{{ $lbl }}</td>
+              <td class="text-end">&#8377;{{ number_format($amt, 2) }}</td>
+            </tr>
+          @endif
         @endforeach
       </tbody>
       <tfoot><tr style="background:#1a3c5e;color:#fff"><th>Total</th><th class="text-end">&#8377;{{ number_format($payment->feeStructure->total_fee,2) }}</th></tr></tfoot>
